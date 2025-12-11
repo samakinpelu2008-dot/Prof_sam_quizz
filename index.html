@@ -1,225 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROF SAM ONLINE CLASS TEST</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Freshers Cup Live</title>
 <style>
 body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #1e3c72, #2a5298);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 10px;
+  margin:0; font-family:sans-serif; background:#0b8f2f; color:#fff; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding:20px; box-sizing:border-box;
 }
-.card {
-  background: white;
-  color: #333;
-  padding: 30px;
-  border-radius: 20px;
-  max-width: 700px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-h1 { color: #1e3c72; font-size: 2rem; margin-bottom: 10px; }
-.subtitle { font-weight: 500; color: #444; margin-bottom: 20px; }
-button {
-  background: #1e3c72; border: none; color: white;
-  padding: 12px 25px; margin: 5px;
-  border-radius: 12px; cursor: pointer; font-size: 1rem;
-}
-button:hover { background: #15315c; }
-.hidden { display: none; }
-#timer { font-size: 1.3rem; font-weight: bold; color: #1e3c72; }
-.top-bar { display: flex; justify-content: space-between; padding: 12px; background: #f0f0f0; color: #333; border-radius: 12px; margin-bottom: 15px; font-weight: 500; }
-.option {
-  background: #f4f4f4; padding: 12px; margin: 10px 0;
-  border-radius: 12px; cursor: pointer; text-align: left;
-}
-.option:hover { background: #d6ebff; }
-.option.selected { background: #1e3c72; color: white; font-weight: bold; }
-input#examCode { padding: 12px; width: 70%; margin: 15px 0; border-radius: 10px; border: 1px solid #ccc; font-size: 1rem; }
-#rating-display { font-weight: bold; font-size: 1.2rem; }
-.rating-Excellent { color: green; }
-.rating-Very\ Good { color: blue; }
-.rating-Good { color: orange; }
-.rating-Poor { color: red; }
-@media(max-width:700px){ .card{padding:20px;} input#examCode{width:90%;} button{padding:10px 18px; font-size:0.95rem;} }
+.navbar { display:flex; justify-content:center; margin-bottom:15px; gap:10px; flex-wrap:wrap; }
+.navbar button { padding:10px 20px; border:none; border-radius:12px; cursor:pointer; font-weight:700; background:#ffdd00; color:#000; }
+.section { display:none; width:100%; max-width:700px; }
+.section.active { display:block; }
+.card { background:#1e1e2f; border-radius:20px; padding:25px; box-shadow:0 15px 35px rgba(0,0,0,0.5); margin-bottom:20px; }
+.team-row {display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+.team{text-align:center; flex:1;}
+.team img{width:80px; height:80px; border-radius:50%; border:3px solid #fff; margin-bottom:10px;}
+.team h2{margin:0; font-size:22px;}
+.score{font-size:48px; font-weight:bold; color:#00ffcc; margin-top:5px;}
+.vs{font-size:32px; font-weight:700; color:#ffdd00; margin:0 10px;}
+.info-box{background: rgba(255,255,255,0.1); padding:15px; border-radius:12px; margin-bottom:20px;}
+.goal-box{background: rgba(255,255,255,0.1); padding:12px; border-radius:12px; margin-bottom:15px;}
+.commentary{background: rgba(255,255,255,0.1); border-radius:12px; padding:12px; max-height:150px; overflow-y:auto; margin-bottom:15px;}
+.fan-section{background: rgba(255,255,255,0.05); border-radius:12px; padding:12px; margin-bottom:20px;}
+.fan-section input{width:75%; padding:8px 12px; border-radius:20px; border:none; margin-right:5px; outline:none; background:#2a2a3b; color:#fff;}
+.fan-section button{padding:8px 12px; border-radius:12px; border:none; cursor:pointer; background:#ffdd00; color:#000;}
+#fanComments p, #generalChat p { background: rgba(255,255,255,0.1); padding:8px; border-radius:8px; margin:4px 0; }
+.deleteBtn{ margin-left:10px; color:red; cursor:pointer; font-weight:bold; }
+.admin-btn{background:#ffdd00;color:#000;border:none;padding:8px 15px;border-radius:12px;cursor:pointer;margin-bottom:10px;}
+#adminPanel{display:none;margin-top:10px;background: rgba(255,255,255,0.15); padding:10px; border-radius:12px;}
+#adminPanel input, #adminPanel select, #adminPanel button{margin:5px 0;padding:6px;border-radius:8px;border:none;}
+#timer{ font-size:28px; font-weight:700; text-align:center; margin-bottom:10px; color: #00ff00; text-shadow:0 0 8px #00ff00;}
+#liveBar{ height:6px; width:20%; background:#00ff00; border-radius:3px; margin:0 auto 10px auto; display:none; animation: liveMove 3s infinite ease-in-out;}
+@keyframes liveMove{0%{transform:translateX(-100%) scaleX(0.5);opacity:0;}25%{transform:translateX(0%) scaleX(1);opacity:1;}50%{transform:translateX(100%) scaleX(0.5);opacity:0;}75%{transform:translateX(0%) scaleX(1);opacity:1;}100%{transform:translateX(-100%) scaleX(0.5);opacity:0;}}
+.floatingHeart{position:absolute;font-size:24px;animation:floatUp 2.0s ease-out forwards;pointer-events:none;z-index:9999;color:#00ff66;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-500px) scale(1.5);}}
+#loveButton{ position:fixed; bottom:30px; right:30px; font-size:40px; cursor:pointer; user-select:none; }
+.matchCard{ background:#1e1e2f; border-radius:15px; padding:15px; margin-bottom:15px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; }
+.matchCard img{ width:50px; height:50px; border-radius:50%; border:2px solid #fff; }
+.likeCounter{ text-align:center; font-size:24px; font-weight:700; margin-bottom:8px; color:#00ff66; }
 </style>
 </head>
 <body>
-<div id="app">
-  <div id="start-screen" class="card">
-    <h1>PROF SAM ONLINE CLASS TEST</h1>
-    <p class="subtitle">PROF SAM WANTS THE BEST, SO DO YOUR BEST</p>
-    <p>You have <strong>20 minutes</strong> to complete 50 questions.<br>Leaving this page twice will auto-submit.</p>
-    <input type="text" id="examCode" placeholder="Enter Exam Code" />
-    <button id="startBtn">Start Test</button>
-  </div>
 
-  <div id="quiz-screen" class="hidden">
-    <div class="top-bar">
-      <span id="timer">20:00</span>
-      <span id="questionCount"></span>
-    </div>
-    <div id="question-container"></div>
-    <div class="buttons">
-      <button id="prevBtn">Previous</button>
-      <button id="nextBtn">Next</button>
-      <button id="submitBtn" class="hidden">Submit</button>
-    </div>
-  </div>
+<div class="navbar">
+  <button onclick="showSection('liveMatch')">Live Match</button>
+  <button onclick="showSection('matchesPage')">Matches</button>
+  <button onclick="showSection('generalChatPage')">General Chat</button>
+</div>
 
-  <div id="result-screen" class="hidden card">
-    <h2>Test Completed ✅</h2>
-    <p id="result-message"></p>
-    <p id="exam-code-display"></p>
-    <p id="score-display"></p>
-    <p id="rating-display"></p>
-    <p>Take a screenshot of this page as proof.</p>
+<!-- LIVE MATCH PAGE -->
+<div id="liveMatch" class="section active">
+  <div id="liveBar"></div>
+  <div id="timer">0</div>
+
+  <div class="card">
+    <div class="team-row">
+      <div class="team">
+        <img id="team1Logo" src="" alt="Team 1 Logo">
+        <h2 id="team1Name"></h2>
+      </div>
+      <div class="vs" id="vsDisplay">VS</div>
+      <div class="team">
+        <img id="team2Logo" src="" alt="Team 2 Logo">
+        <h2 id="team2Name"></h2>
+      </div>
+    </div>
+
+    <div class="info-box" id="matchInfo"></div>
+
+    <div class="goal-box">
+      <h3>Goal Scorers</h3>
+      <div id="goals">None yet</div>
+    </div>
+
+    <div class="commentary">
+      <h3>Live Updates</h3>
+      <div id="liveComments"></div>
+    </div>
+
+    <div class="fan-section">
+      <h3>Fan Comments ❤️</h3>
+      <input type="text" id="fanComment" placeholder="Write a comment..." />
+      <button onclick="addFanComment()">Send</button>
+      <div id="fanComments"></div>
+    </div>
+
+    <div class="likeCounter" id="likeCounter">0 Likes</div>
+    <div id="loveButton">💚</div>
+
+    <button class="admin-btn" id="adminBtn">Show Admin Controls</button>
+    <div id="adminPanel">
+      <label>Stage:</label>
+      <select id="stageSelect">
+        <option value="PRE">Pre-match</option>
+        <option value="FH">First Half</option>
+        <option value="HT">Half-time</option>
+        <option value="SH">Second Half</option>
+        <option value="FT">Full-time</option>
+      </select>
+      <button onclick="changeStage()">Update Stage</button><br>
+
+      <label>Team 1 Score:</label><input type="number" id="team1Score" min="0">
+      <button onclick="setScore('team1')">Update</button><br>
+
+      <label>Team 2 Score:</label><input type="number" id="team2Score" min="0">
+      <button onclick="setScore('team2')">Update</button><br>
+
+      <label>Goal Scorer:</label><input type="text" id="goalPlayer">
+      <button onclick="addGoal()">Add Goal</button>
+      <button onclick="deleteAllGoals()">Delete All Goals</button><br>
+
+      <label>Commentary:</label><input type="text" id="commentText">
+      <button onclick="addCommentary()">Add Comment</button>
+      <button onclick="deleteAllComments()">Delete All Comments</button>
+    </div>
   </div>
 </div>
 
+<!-- MATCH SELECTION PAGE -->
+<div id="matchesPage" class="section">
+  <div id="matchCards"></div>
+  <div class="card">
+    <h3>Admin: Add New Match</h3>
+    <input type="text" id="newTeam1" placeholder="Team 1 Name">
+    <input type="text" id="newTeam2" placeholder="Team 2 Name"><br>
+    <input type="text" id="newTeam1Logo" placeholder="Team 1 Logo URL">
+    <input type="text" id="newTeam2Logo" placeholder="Team 2 Logo URL"><br>
+    <input type="text" id="newVenue" placeholder="Venue">
+    <input type="datetime-local" id="newDate"><br>
+    <button onclick="addNewMatch()">Add Match</button>
+  </div>
+</div>
+
+<!-- GENERAL CHAT PAGE -->
+<div id="generalChatPage" class="section">
+  <div class="card fan-section">
+    <h3>General Chat 💬</h3>
+    <input type="text" id="generalChatInput" placeholder="Type a message..." />
+    <button onclick="addGeneralChat()">Send</button>
+    <div id="generalChat"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-let currentIndex = 0;
-let answers = Array(50).fill(null);
-let examCode = "";
-let leaveCount = 0;
-let timeLeft = 20*60;
-let timerInterval;
+// ---------------- FIREBASE CONFIG ----------------
+const firebaseConfig = {
+  apiKey: "AIzaSyA2AScPQkOE632znM9vvCahijtnronS3jU",
+  authDomain: "fresherscuplive.firebaseapp.com",
+  databaseURL: "https://fresherscuplive-default-rtdb.firebaseio.com",
+  projectId: "fresherscuplive",
+  storageBucket: "fresherscuplive.firebasestorage.app",
+  messagingSenderId: "502451588704",
+  appId: "1:502451588704:web:56bd4d7fc98814cddfbd05"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-// ==================== QUESTIONS 1-50 ====================
-const questions = [
-{q:"Which of the following is a fundamental quantity?",options:["Volume","Density","Length","Force"],answer:2},
-{q:"Which of the following is not a fundamental quantity?",options:["Mass","Time","Temperature","Pressure"],answer:3},
-{q:"Derived quantities are obtained from:",options:["Scalar quantities","Fundamental quantities","Physical constants","Dimensionless quantities"],answer:1},
-{q:"How many fundamental quantities are recognized in mechanics?",options:["5","6","7","8"],answer:2},
-{q:"The S.I. unit of time is:",options:["Minute","Hour","Second","Millisecond"],answer:2},
-{q:"Force is a:",options:["Scalar quantity","Derived quantity","Fundamental quantity","Constant"],answer:1},
-{q:"Which of the following is a vector quantity?",options:["Speed","Work","Distance","Velocity"],answer:3},
-{q:"The S.I. unit of mass is:",options:["Kilogram","Gram","Pound","Newton"],answer:0},
-{q:"Energy is measured in:",options:["Watt","Joule","Newton","Pascal"],answer:1},
-{q:"Which of these is a scalar quantity?",options:["Force","Displacement","Temperature","Momentum"],answer:2},
-{q:"The derived unit of pressure is:",options:["kg/m³","N/m²","J/s","m/s²"],answer:1},
-{q:"Work done =",options:["Force × Power","Mass × Velocity","Force × Distance","Energy / Time"],answer:2},
-{q:"Which has both magnitude and direction?",options:["Energy","Speed","Force","Distance"],answer:2},
-{q:"Volume is derived from which fundamental quantity?",options:["Mass","Length","Time","Temperature"],answer:1},
-{q:"Which of these is not a derived quantity?",options:["Area","Velocity","Time","Force"],answer:2},
-{q:"Acceleration is the rate of change of:",options:["Distance","Displacement","Velocity","Force"],answer:2},
-{q:"The dimensional formula of force is:",options:["MLT⁻¹","MLT⁻²","ML²T⁻³","ML⁻¹T²"],answer:1},
-{q:"Which is the correct unit for density?",options:["kg/m³","N/m²","m³/kg","J/s"],answer:0},
-{q:"Momentum =",options:["Force × Time","Mass × Velocity","Energy × Time","Pressure × Volume"],answer:1},
-{q:"Which quantity measures rate of doing work?",options:["Energy","Power","Force","Velocity"],answer:1},
-{q:"A quantity with magnitude only is:",options:["Velocity","Force","Temperature","Acceleration"],answer:2},
-{q:"Displacement is measured in:",options:["m/s","m","m²","N"],answer:1},
-{q:"Speed is a:",options:["Vector","Scalar","Derived","Fundamental"],answer:1},
-{q:"Density = Mass / ?",options:["Volume","Area","Length","Time"],answer:0},
-{q:"Which is a derived vector quantity?",options:["Velocity","Mass","Temperature","Time"],answer:0},
-{q:"Pressure = Force / ?",options:["Time","Area","Distance","Volume"],answer:1},
-{q:"Which quantity has no direction?",options:["Force","Velocity","Speed","Displacement"],answer:2},
-{q:"The S.I. unit of force is:",options:["Joule","Newton","Pascal","Watt"],answer:1},
-{q:"Work done is measured in:",options:["Newton","Joule","Pascal","Watt"],answer:1},
-{q:"Power is measured in:",options:["Joule","Newton","Watt","Pascal"],answer:2},
-{q:"Vector quantities include:",options:["Speed, Energy","Velocity, Force","Temperature, Mass","Distance, Time"],answer:1},
-{q:"Area is a derived quantity from:",options:["Length × Length","Mass × Acceleration","Force × Distance","Velocity × Time"],answer:0},
-{q:"The rate of change of velocity is:",options:["Acceleration","Speed","Momentum","Force"],answer:0},
-{q:"Which is a fundamental scalar quantity?",options:["Time","Velocity","Force","Acceleration"],answer:0},
-{q:"Temperature is measured in:",options:["Kelvin","Newton","Joule","Watt"],answer:0},
-{q:"Velocity = Displacement / ?",options:["Time","Force","Mass","Power"],answer:0},
-{q:"Distance is a:",options:["Scalar","Vector","Derived","Constant"],answer:0},
-{q:"Weight is a:",options:["Vector","Scalar","Fundamental","Dimensionless"],answer:0},
-{q:"The derived unit of energy is:",options:["Joule","Newton","Pascal","Watt"],answer:0},
-{q:"Work = Force × ?",options:["Distance","Time","Velocity","Power"],answer:0},
-{q:"Which is a scalar derived quantity?",options:["Speed","Force","Velocity","Acceleration"],answer:0},
-{q:"Displacement vs Distance: Which is vector?",options:["Distance","Displacement","Both","Neither"],answer:1},
-{q:"Which is used for measuring time?",options:["Second","Newton","Watt","Pascal"],answer:0},
-{q:"Force = Mass × ?",options:["Acceleration","Velocity","Power","Time"],answer:0},
-{q:"Acceleration unit is:",options:["m/s²","m/s","N","J"],answer:0},
-{q:"A scalar has:",options:["Magnitude only","Direction only","Both","None"],answer:0},
-{q:"Momentum unit is:",options:["kg m/s","kg m²/s²","N","J"],answer:0},
-{q:"Power formula:",options:["Work / Time","Force × Distance","Mass × Acceleration","Velocity × Time"],answer:0},
-{q:"Density unit is:",options:["kg/m³","N/m²","J/s","Watt"],answer:0}
-];
+// ---------------- GLOBAL VARIABLES ----------------
+let currentMatchId = null;
+let myUID = localStorage.getItem("fanUID") || "uid-" + Math.random().toString(36).substr(2,10);
+localStorage.setItem("fanUID", myUID);
+let myName = localStorage.getItem("fanName") || prompt("Enter your name:") || "Anonymous";
+localStorage.setItem("fanName", myName);
+let timerInterval = null;
 
-// ==================== FUNCTIONS ====================
-const startScreen = document.getElementById('start-screen');
-const quizScreen = document.getElementById('quiz-screen');
-const resultScreen = document.getElementById('result-screen');
-const questionContainer = document.getElementById('question-container');
-const questionCount = document.getElementById('questionCount');
-const startBtn = document.getElementById('startBtn');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const submitBtn = document.getElementById('submitBtn');
-const timerEl = document.getElementById('timer');
-const examCodeInput = document.getElementById('examCode');
-const resultMessage = document.getElementById('result-message');
-const examCodeDisplay = document.getElementById('exam-code-display');
-const scoreDisplay = document.getElementById('score-display');
-const ratingDisplay = document.getElementById('rating-display');
-
-function displayQuestion() {
-  const q = questions[currentIndex];
-  questionContainer.innerHTML = `<h3>${currentIndex+1}. ${q.q}</h3>` +
-    q.options.map((opt,i)=>`<div class="option ${answers[currentIndex]===i?'selected':''}" onclick="selectOption(${i})">${opt}</div>`).join('');
-  questionCount.textContent = `Question ${currentIndex+1} of ${questions.length}`;
-  submitBtn.classList.toggle("hidden", currentIndex !== questions.length-1);
-}
-window.selectOption = function(idx) {
-  answers[currentIndex] = idx;
-  displayQuestion();
-}
-function nextQuestion() { if(currentIndex<questions.length-1){ currentIndex++; displayQuestion();} }
-function prevQuestion() { if(currentIndex>0){ currentIndex--; displayQuestion();} }
-
-function startTimer() {
-  timerInterval = setInterval(()=>{
-    timeLeft--;
-    let m=Math.floor(timeLeft/60);
-    let s=timeLeft%60;
-    timerEl.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    if(timeLeft<=0){ submitTest(); }
-  },1000);
+// ---------------- SECTIONS ----------------
+function showSection(sec){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  if(sec === 'matchesPage') loadMatchCards();
 }
 
-window.addEventListener('blur', ()=>{
-  leaveCount++;
-  if(leaveCount===1){ alert("Do not leave the page again or your test will be submitted automatically!"); }
-  if(leaveCount>=2){ alert("You left the page twice. Test is submitted automatically."); submitTest(); }
+// ---------------- MATCH SELECTION ----------------
+const matchesRef = database.ref("matches");
+function loadMatchCards(){
+  matchesRef.once("value").then(snap=>{
+    const data = snap.val()||{};
+    const container = document.getElementById("matchCards");
+    container.innerHTML = "";
+    Object.keys(data).forEach(id=>{
+      const m = data[id];
+      const div = document.createElement("div");
+      div.className = "matchCard";
+      div.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <img src="${m.team1Logo}" alt="Team1">
+          <span>${m.team1Name}</span>
+          <strong>VS</strong>
+          <img src="${m.team2Logo}" alt="Team2">
+          <span>${m.team2Name}</span>
+        </div>
+        <div>${new Date(m.date).toLocaleString()}</div>
+      `;
+      div.onclick = ()=>loadMatchPage(id);
+      container.appendChild(div);
+    });
+  });
+}
+function addNewMatch(){
+  const t1 = document.getElementById("newTeam1").value.trim();
+  const t2 = document.getElementById("newTeam2").value.trim();
+  const t1Logo = document.getElementById("newTeam1Logo").value.trim();
+  const t2Logo = document.getElementById("newTeam2Logo").value.trim();
+  const venue = document.getElementById("newVenue").value.trim();
+  const date = document.getElementById("newDate").value;
+  if(!t1 || !t2 || !t1Logo || !t2Logo || !venue || !date){ alert("Fill all fields"); return; }
+  const newId = "match-" + Date.now();
+  matchesRef.child(newId).set({
+    team1Name:t1, team2Name:t2, team1Logo:t1Logo, team2Logo:t2Logo,
+    venue:venue, date:date, stage:"PRE", score:{team1:0, team2:0}, goalScorers:[], liveComments:[], loveCount:0, loveActions:{}
+  });
+  loadMatchCards();
+  alert("Match Added!");
+}
+
+// ---------------- LOAD LIVE MATCH ----------------
+function loadMatchPage(matchId){
+  currentMatchId = matchId;
+  const ref = matchesRef.child(matchId);
+  ref.once("value").then(snap=>{
+    const m = snap.val();
+    if(!m) return;
+    document.getElementById("team1Logo").src = m.team1Logo;
+    document.getElementById("team1Name").textContent = m.team1Name;
+    document.getElementById("team2Logo").src = m.team2Logo;
+    document.getElementById("team2Name").textContent = m.team2Name;
+    document.getElementById("matchInfo").innerHTML = `
+      <p><strong>Venue:</strong> ${m.venue}</p>
+      <p><strong>Date:</strong> ${new Date(m.date).toLocaleString()}</p>
+      <p><strong>Stage:</strong> ${m.stage}</p>
+    `;
+    showSection("liveMatch");
+  });
+}
+
+// ---------------- GENERAL CHAT ----------------
+const generalChatRef = database.ref("generalChat");
+function addGeneralChat(){
+  const text = document.getElementById("generalChatInput").value.trim();
+  if(!text) return;
+  generalChatRef.push({ name: myName, text, uid: myUID, time: Date.now() });
+  document.getElementById("generalChatInput").value="";
+}
+generalChatRef.on("value", snap=>{
+  const data = snap.val()||{};
+  const container = document.getElementById("generalChat");
+  container.innerHTML = "";
+  Object.keys(data).forEach(key=>{
+    const m = data[key];
+    const p = document.createElement("p");
+    p.innerHTML = `<strong>${m.name}:</strong> ${m.text}`;
+    if(m.uid===myUID || document.getElementById("adminPanel").style.display=="block"){
+      const del = document.createElement("span"); del.textContent=" ❌"; del.className="deleteBtn";
+      del.onclick=()=>generalChatRef.child(key).remove();
+      p.appendChild(del);
+      const edit = document.createElement("span"); edit.textContent=" ✏️"; edit.style.cursor="pointer";
+      edit.onclick=()=>{
+        const newText = prompt("Edit message:", m.text);
+        if(newText && newText.trim()!=="") generalChatRef.child(key).update({text:newText});
+      };
+      p.appendChild(edit);
+    }
+    container.appendChild(p);
+  });
 });
 
-function submitTest(){
-  clearInterval(timerInterval);
-  quizScreen.classList.add("hidden");
-  resultScreen.classList.remove("hidden");
-  let score=answers.reduce((acc,ans,i)=>ans===questions[i].answer?acc+2:acc,0);
-  let rating=score>=90?"Excellent":score>=75?"Very Good":score>=50?"Good":"Poor";
-  resultMessage.textContent="You have completed the test!";
-  examCodeDisplay.textContent=`Exam Code: ${examCode}`;
-  scoreDisplay.textContent=`Score: ${score}/100`;
-  ratingDisplay.textContent=`Rating: ${rating}`;
-  ratingDisplay.className=`rating-${rating.replace(' ','\\ ')}`;
-}
-
-startBtn.onclick=function(){
-  examCode=examCodeInput.value.trim();
-  if(examCode===""){ alert("Please enter your exam code!"); return; }
-  startScreen.classList.add("hidden");
-  quizScreen.classList.remove("hidden");
-  currentIndex=0;
-  displayQuestion();
-  startTimer();
-};
-nextBtn.onclick=nextQuestion;
-prevBtn.onclick=prevQuestion;
-submitBtn.onclick=submitTest;
-
+// ---------------- NAVIGATION + INITIAL LOAD ----------------
+showSection("matchesPage"); // start on matches page
 </script>
 </body>
 </html>
