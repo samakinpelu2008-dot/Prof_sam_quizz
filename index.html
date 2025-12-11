@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Freshers Cup Live Match</title>
+<title>Freshers Cup – CPE vs AERD</title>
 <style>
 body { margin:0; font-family:sans-serif; background:#0b8f2f; color:#fff; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding:20px; box-sizing:border-box; }
 .card{ background:#1e1e2f; width:100%; max-width:700px; border-radius:20px; padding:25px; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
@@ -39,30 +39,42 @@ body { margin:0; font-family:sans-serif; background:#0b8f2f; color:#fff; display
   <div id="liveBar"></div>
   <div id="timer">0</div>
 
+  <!-- TEAMS -->
   <div class="team-row">
     <div class="team">
-      <img src="" alt="Team 1 Logo" id="team1Logo">
-      <h2 id="team1Name"></h2>
+      <img src="https://i.ibb.co/XfTKYHJ0/IMG-20251009-WA0089.jpg" alt="CPE Logo">
+      <h2>CPE</h2>
     </div>
     <div class="vs" id="vsDisplay">VS</div>
     <div class="team">
-      <img src="" alt="Team 2 Logo" id="team2Logo">
-      <h2 id="team2Name"></h2>
+      <img src="https://i.ibb.co/3m3882p9/1000110863.jpg" alt="AERD Logo">
+      <h2>AERD</h2>
     </div>
   </div>
 
-  <div class="info-box" id="matchInfo"></div>
+  <!-- MATCH INFO -->
+  <div class="info-box">
+    <p><strong>Competition:</strong> Freshers Cup</p>
+    <p><strong>Stage:</strong> Knockout stage</p>
+    <p><strong>Venue:</strong> Lico Field</p>
+    <p><strong>Location:</strong> LAUTECH Ogbomosho</p>
+    <p><strong>Weather:</strong> Sunny</p>
+    <p><strong>Kick Off:</strong> 9:00 AM</p>
+  </div>
 
+  <!-- GOALS -->
   <div class="goal-box">
     <h3>Goal Scorers</h3>
     <div id="goals">None yet</div>
   </div>
 
+  <!-- LIVE COMMENTARY -->
   <div class="commentary">
     <h3>Live Updates</h3>
     <div id="liveComments"></div>
   </div>
 
+  <!-- FAN COMMENTS -->
   <div class="fan-section">
     <h3>Fan Comments ❤️</h3>
     <input type="text" id="fanComment" placeholder="Write your comment..." />
@@ -70,9 +82,11 @@ body { margin:0; font-family:sans-serif; background:#0b8f2f; color:#fff; display
     <div id="fanComments"></div>
   </div>
 
+  <!-- LIKES -->
   <div class="likeCounter" id="likeCounter">0 Likes</div>
   <div id="loveButton">💚</div>
 
+  <!-- ADMIN PANEL -->
   <button class="admin-btn" id="adminBtn">Show Admin Controls</button>
   <div id="adminPanel">
     <label>Stage:</label>
@@ -120,61 +134,30 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// References
 const matchRef = database.ref("match");
 const fanRef = database.ref("fanComments");
 const loveRef = database.ref("loveCount");
 const loveActionsRef = database.ref("loveActions");
 
-// Admin
+// Admin password
 const adminPassword = "CPE2025";
 document.getElementById("adminBtn").addEventListener("click", ()=>{
   let pass = prompt("Enter admin password:");
-  if(pass === adminPassword){
+  if(pass===adminPassword){
     document.getElementById("adminPanel").style.display="block";
     document.getElementById("adminBtn").style.display="none";
   } else alert("Wrong password!");
 });
 
 // Timer
-let timerInterval = null;
+let timerInterval=null;
 
-// Initialize default match if empty
-matchRef.once("value").then(snap=>{
-  if(!snap.val()){
-    matchRef.set({
-      stage: "Knockout stage",
-      scoreCPE:0,
-      scoreFRM:0,
-      goalScorers:[],
-      liveComments:[],
-      startTime:null,
-      halfLength:30,
-      team1:{name:"CPE", logo:"https://i.ibb.co/XfTKYHJ0/IMG-20251009-WA0089.jpg"},
-      team2:{name:"AERD", logo:"https://i.ibb.co/3m3882p9/1000110863.jpg"},
-      kickOff:"9:00 AM"
-    });
-  }
-});
+// Listen to match
+matchRef.on("value", snapshot=>{
+  const data = snapshot.val(); if(!data) return;
 
-// Listen to match changes
-matchRef.on("value", snap=>{
-  const data = snap.val(); if(!data) return;
-
-  document.getElementById("team1Logo").src = data.team1.logo;
-  document.getElementById("team1Name").textContent = data.team1.name;
-  document.getElementById("team2Logo").src = data.team2.logo;
-  document.getElementById("team2Name").textContent = data.team2.name;
-
-  document.getElementById("vsDisplay").textContent = (data.stage=="PRE")? "VS":`${data.scoreCPE||0} - ${data.scoreFRM||0}`;
-
-  document.getElementById("matchInfo").innerHTML = `
-    <p><strong>Competition:</strong> Freshers Cup</p>
-    <p><strong>Stage:</strong> ${data.stage}</p>
-    <p><strong>Venue:</strong> Lico Field</p>
-    <p><strong>Location:</strong> LAUTECH Ogbomosho</p>
-    <p><strong>Weather:</strong> Sunny</p>
-    <p><strong>Kick Off:</strong> ${data.kickOff}</p>
-  `;
+  document.getElementById("vsDisplay").textContent=(data.stage=="PRE")?"VS":`${data.scoreCPE||0} - ${data.scoreFRM||0}`;
 
   // Goals
   const goalDiv = document.getElementById("goals"); goalDiv.innerHTML="";
@@ -182,21 +165,19 @@ matchRef.on("value", snap=>{
     data.goalScorers.forEach((g,i)=>{
       const p=document.createElement("p"); p.textContent=g;
       if(document.getElementById("adminPanel").style.display=="block"){
-        const btn=document.createElement("span"); btn.textContent="❌"; btn.className="deleteBtn";
-        btn.onclick=()=>deleteGoal(i); p.appendChild(btn);
+        const btn=document.createElement("span"); btn.textContent="❌"; btn.className="deleteBtn"; btn.onclick=()=>deleteGoal(i); p.appendChild(btn);
       }
       goalDiv.appendChild(p);
     });
   } else goalDiv.textContent="None yet";
 
-  // Live Comments
-  const liveDiv=document.getElementById("liveComments"); liveDiv.innerHTML="";
+  // Live commentary
+  const liveDiv = document.getElementById("liveComments"); liveDiv.innerHTML="";
   if(data.liveComments && data.liveComments.length){
     data.liveComments.forEach((c,i)=>{
       const p=document.createElement("p"); p.textContent=c;
       if(document.getElementById("adminPanel").style.display=="block"){
-        const btn=document.createElement("span"); btn.textContent="❌"; btn.className="deleteBtn";
-        btn.onclick=()=>deleteComment(i); p.appendChild(btn);
+        const btn=document.createElement("span"); btn.textContent="❌"; btn.className="deleteBtn"; btn.onclick=()=>deleteComment(i); p.appendChild(btn);
       }
       liveDiv.appendChild(p);
     });
@@ -205,17 +186,16 @@ matchRef.on("value", snap=>{
   document.getElementById("liveBar").style.display=(["FH","HT","SH"].includes(data.stage))?"block":"none";
 
   const halfLength = data.halfLength||30;
-  if(data.stage=="FH"||data.stage=="SH"){
-    if(data.startTime) startLiveTimerFromStartTime(data.startTime,data.stage,halfLength);
-  } else if(data.stage=="HT"){ document.getElementById("timer").textContent="HALF-TIME"; clearInterval(timerInterval);}
+  if(data.stage=="FH"||data.stage=="SH"){ if(data.startTime) startLiveTimerFromStartTime(data.startTime,data.stage,halfLength);}
+  else if(data.stage=="HT"){ document.getElementById("timer").textContent="HALF-TIME"; clearInterval(timerInterval);}
   else if(data.stage=="FT"){ document.getElementById("timer").textContent="FULL-TIME"; clearInterval(timerInterval);}
 });
 
-// ---------------- FAN COMMENTS ----------------
+// Fan comments
 if(!localStorage.getItem("fanUID")) localStorage.setItem("fanUID",Date.now().toString());
-
-fanRef.on("value", snap=>{
-  const data = snap.val()||[]; const fanDiv=document.getElementById("fanComments"); fanDiv.innerHTML="";
+fanRef.on("value", snapshot=>{
+  const data = snapshot.val()||[];
+  const fanDiv = document.getElementById("fanComments"); fanDiv.innerHTML="";
   data.forEach((c,i)=>{
     const p=document.createElement("p"); p.textContent=c.text;
     if(c.uid===localStorage.getItem("fanUID") || document.getElementById("adminPanel").style.display=="block"){
@@ -225,29 +205,29 @@ fanRef.on("value", snap=>{
   });
 });
 
-// ---------------- ADMIN FUNCTIONS ----------------
+// Admin functions
 function changeStage(){ matchRef.update({stage:document.getElementById("stageSelect").value}); }
-function updateHalfLength(){ const length=Number(document.getElementById("halfLength").value); if(length<1)return alert("Half length must be at least 1 minute"); matchRef.update({halfLength:length}); }
+function updateHalfLength(){ const length=Number(document.getElementById("halfLength").value); if(length<1) return alert("Half length must be at least 1 minute"); matchRef.update({halfLength:length}); }
 function setScore(team){ const val=(team=="CPE")?Number(document.getElementById("cpeScore").value):Number(document.getElementById("frmScore").value); if(team=="CPE") matchRef.update({scoreCPE:val}); else matchRef.update({scoreFRM:val}); }
-function addGoal(){ const player=document.getElementById("goalPlayer").value.trim(); if(!player) return; matchRef.child("goalScorers").once("value").then(s=>{let arr=s.val()||[]; arr.push(player); matchRef.update({goalScorers:arr});}); document.getElementById("goalPlayer").value=""; }
+function addGoal(){ const player=document.getElementById("goalPlayer").value.trim(); if(!player)return; matchRef.child("goalScorers").once("value").then(s=>{let arr=s.val()||[]; arr.push(player); matchRef.update({goalScorers:arr});}); document.getElementById("goalPlayer").value=""; }
 function deleteGoal(i){ matchRef.child("goalScorers").once("value").then(s=>{let arr=s.val()||[]; arr.splice(i,1); matchRef.update({goalScorers:arr});}); }
 function deleteAllGoals(){ matchRef.update({goalScorers:[]}); }
-function addCommentary(){ const text=document.getElementById("commentText").value.trim(); if(!text) return; matchRef.child("liveComments").once("value").then(s=>{ let arr=s.val()||[]; arr.push(text); matchRef.update({liveComments:arr}); }); document.getElementById("commentText").value=""; }
-function deleteComment(i){ matchRef.child("liveComments").once("value").then(s=>{ let arr=s.val()||[]; arr.splice(i,1); matchRef.update({liveComments:arr}); }); }
+function addCommentary(){ const text=document.getElementById("commentText").value.trim(); if(!text)return; matchRef.child("liveComments").once("value").then(s=>{let arr=s.val()||[]; arr.push(text); matchRef.update({liveComments:arr});}); document.getElementById("commentText").value=""; }
+function deleteComment(i){ matchRef.child("liveComments").once("value").then(s=>{let arr=s.val()||[]; arr.splice(i,1); matchRef.update({liveComments:arr});}); }
 function deleteAllComments(){ matchRef.update({liveComments:[]}); }
 
-// ---------------- FAN COMMENTS ----------------
-function addFanComment(){ const text=document.getElementById("fanComment").value.trim(); if(!text) return; fanRef.once("value").then(s=>{let arr=s.val()||[]; arr.push({text, uid:localStorage.getItem("fanUID")}); fanRef.set(arr);}); document.getElementById("fanComment").value=""; }
+// Fan comments
+function addFanComment(){ const text=document.getElementById("fanComment").value.trim(); if(!text)return; fanRef.once("value").then(s=>{let arr=s.val()||[]; arr.push({text,uid:localStorage.getItem("fanUID")}); fanRef.set(arr);}); document.getElementById("fanComment").value=""; }
 function deleteFanComment(i){ fanRef.once("value").then(s=>{let arr=s.val()||[]; arr.splice(i,1); fanRef.set(arr);}); }
 
-// ---------------- LIKE SYSTEM ----------------
+// Like system
 function spawnHeart(x,y){ const heart=document.createElement("div"); heart.className="floatingHeart"; heart.textContent="💚"; const left=Math.max(8,Math.min(window.innerWidth-32,x-12)); const top=Math.max(8,Math.min(window.innerHeight-32,y-12)); heart.style.left=left+"px"; heart.style.top=top+"px"; document.body.appendChild(heart); setTimeout(()=>heart.remove(),1500);}
-document.getElementById("loveButton").addEventListener("click",e=>{ spawnHeart(e.clientX,e.clientY); loveActionsRef.push({x:e.clientX, y:e.clientY, time:Date.now()}); loveRef.transaction(current=> (current||0)+1); });
-loveActionsRef.on("child_added",snap=>{ const randomX=Math.random()*(window.innerWidth-80)+40; const baseY=window.innerHeight-120; spawnHeart(randomX,baseY); });
-loveRef.on("value",snap=>{ document.getElementById("likeCounter").textContent=(snap.val()||0)+" Likes"; });
+document.getElementById("loveButton").addEventListener("click", e=>{ spawnHeart(e.clientX,e.clientY); loveActionsRef.push({x:e.clientX,y:e.clientY,time:Date.now()}); loveRef.transaction(current=>(current||0)+1); });
+loveActionsRef.on("child_added", snap=>{ const randomX=Math.random()*(window.innerWidth-80)+40; const baseY=window.innerHeight-120; spawnHeart(randomX,baseY); });
+loveRef.on("value", snap=>{ document.getElementById("likeCounter").textContent=(snap.val()||0)+" Likes"; });
 
-// ---------------- TIMER ----------------
-function startLiveTimerFromStartTime(startTimestamp,stage,halfLength){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(()=>{ const now=Date.now(); let elapsed=Math.floor((now-startTimestamp)/60000); let displayTime=""; if(stage=="FH"){ if(elapsed<=halfLength) displayTime=elapsed.toString(); else displayTime=`${halfLength}+${elapsed-halfLength}`; } else if(stage=="SH"){ elapsed+=halfLength; if(elapsed<=2*halfLength) displayTime=elapsed.toString(); else displayTime=`${2*halfLength}+${elapsed-2*halfLength}`; } document.getElementById("timer").textContent=displayTime; },1000); }
+// Timer
+function startLiveTimerFromStartTime(startTimestamp,stage,halfLength){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(()=>{ const now=Date.now(); let elapsed=Math.floor((now-startTimestamp)/60000); let displayTime=""; if(stage=="FH"){ if(elapsed<=halfLength) displayTime=elapsed.toString(); else displayTime=`${halfLength}+${elapsed-halfLength}`; } else if(stage=="SH"){ elapsed+=halfLength; if(elapsed<=2*halfLength) displayTime=elapsed.toString(); else displayTime=`${2*halfLength}+${elapsed-2*halfLength}`; } document.getElementById("timer").textContent=displayTime; },1000);}
 </script>
 </body>
 </html>
