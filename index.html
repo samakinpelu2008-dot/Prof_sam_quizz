@@ -206,8 +206,27 @@ fanRef.on("value", snapshot=>{
 });
 
 // Admin functions
-function changeStage(){ matchRef.update({stage:document.getElementById("stageSelect").value}); }
-function updateHalfLength(){ const length=Number(document.getElementById("halfLength").value); if(length<1) return alert("Half length must be at least 1 minute"); matchRef.update({halfLength:length}); }
+function changeStage(){
+  const stage = document.getElementById("stageSelect").value;
+  if(stage=="FH" || stage=="SH"){
+    matchRef.update({stage: stage, startTime: Date.now()});
+  } else{
+    matchRef.update({stage: stage});
+  }
+}
+
+function updateHalfLength(){
+  const length = Number(document.getElementById("halfLength").value);
+  if(length < 1) return alert("Half length must be at least 1 minute");
+  matchRef.update({halfLength: length});
+  matchRef.once("value").then(snapshot=>{
+    const data = snapshot.val();
+    if(data && (data.stage=="FH" || data.stage=="SH")){
+      matchRef.update({startTime: Date.now()});
+    }
+  });
+}
+
 function setScore(team){ const val=(team=="CPE")?Number(document.getElementById("cpeScore").value):Number(document.getElementById("frmScore").value); if(team=="CPE") matchRef.update({scoreCPE:val}); else matchRef.update({scoreFRM:val}); }
 function addGoal(){ const player=document.getElementById("goalPlayer").value.trim(); if(!player)return; matchRef.child("goalScorers").once("value").then(s=>{let arr=s.val()||[]; arr.push(player); matchRef.update({goalScorers:arr});}); document.getElementById("goalPlayer").value=""; }
 function deleteGoal(i){ matchRef.child("goalScorers").once("value").then(s=>{let arr=s.val()||[]; arr.splice(i,1); matchRef.update({goalScorers:arr});}); }
@@ -227,7 +246,23 @@ loveActionsRef.on("child_added", snap=>{ const randomX=Math.random()*(window.inn
 loveRef.on("value", snap=>{ document.getElementById("likeCounter").textContent=(snap.val()||0)+" Likes"; });
 
 // Timer
-function startLiveTimerFromStartTime(startTimestamp,stage,halfLength){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(()=>{ const now=Date.now(); let elapsed=Math.floor((now-startTimestamp)/60000); let displayTime=""; if(stage=="FH"){ if(elapsed<=halfLength) displayTime=elapsed.toString(); else displayTime=`${halfLength}+${elapsed-halfLength}`; } else if(stage=="SH"){ elapsed+=halfLength; if(elapsed<=2*halfLength) displayTime=elapsed.toString(); else displayTime=`${2*halfLength}+${elapsed-2*halfLength}`; } document.getElementById("timer").textContent=displayTime; },1000);}
+function startLiveTimerFromStartTime(startTimestamp,stage,halfLength){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    const now=Date.now();
+    let elapsed=Math.floor((now-startTimestamp)/60000);
+    let displayTime="";
+    if(stage=="FH"){
+      if(elapsed<=halfLength) displayTime=elapsed.toString();
+      else displayTime=`${halfLength}+${elapsed-halfLength}`;
+    } else if(stage=="SH"){
+      elapsed+=halfLength;
+      if(elapsed<=2*halfLength) displayTime=elapsed.toString();
+      else displayTime=`${2*halfLength}+${elapsed-2*halfLength}`;
+    }
+    document.getElementById("timer").textContent=displayTime;
+  },1000);
+}
 </script>
 </body>
 </html>
